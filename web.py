@@ -84,16 +84,16 @@ def single_door():
         else:
             if single_door_sensors_active:
                 if GPIO.input(sensors['single']['pins'][0]) == GPIO.LOW:
-                    print("Garage is Closed")
+                    app.logger.info("Garage is Closed")
                     return "Door is closed"
                 elif GPIO.input(sensors['single']['pins'][1]) == GPIO.LOW:
-                    print("Garage is Open")
+                    app.logger.info("Garage is Open")
                     return "Door is open"
 
-            print("Unable to check single door status")
+            app.logger.info("Unable to check single door status")
             return "Door status unknown"
     else:
-        print("Bad code: %s" % (request.args['code']))
+        app.logger.info("Bad code: %s" % (request.args['code']))
         abort(401)
 
 
@@ -105,16 +105,16 @@ def double_door():
         else:
             if double_door_sensors_active:
                 if GPIO.input(sensors['double']['pins'][0]) == GPIO.LOW:
-                    print("Garage is Closed")
+                    app.logger.info("Garage is Closed")
                     return "Door is closed"
                 elif GPIO.input(sensors['double']['pins'][1]) == GPIO.LOW:
-                    print("Garage is Open")
+                    app.logger.info("Garage is Open")
                     return "Door is open"
 
-            print("Unable to check double door status")
+            app.logger.info("Unable to check double door status")
             return "Door status unknown"
     else:
-        print("Bad code: %s" % (request.args['code']))
+        app.logger.info("Bad code: %s" % (request.args['code']))
         abort(401)
 
 
@@ -137,17 +137,20 @@ def init_pins():
     """
     The pin numbers refer to the board connector not the chip
     """
+    app.logger.info("Initializing pins")
     GPIO.setmode(GPIO.BOARD)
     GPIO.setwarnings(False)
     # Activate the sensors
     for sensor in sensors.keys():
         if sensor['activate']:
+            app.logger.info("Activating sensor: %s" % (sensor))
             for pin in sensor['pins']:
                 GPIO.setup(pin, GPIO.IN, GPIO.PUD_UP)
 
     # Activate the relays
     for relay in relays.keys():
         if relay['activate']:
+            app.logger.info("Activating relay: %s" % (relay))
             GPIO.setup(relay['pin'], GPIO.OUT)
             GPIO.output(relay['pin'], GPIO.HIGH)
 
@@ -161,6 +164,7 @@ def load_config():
     global relay_two_active
     global relays
 
+    app.logger.info("Loading config file: %s" % (config_file))
     with open(config_file) as f:
         config = yaml.full_load(f)
 
@@ -174,21 +178,23 @@ def load_config():
 
 
 def code_is_authorized(code):
-    print("code: %s" % (code))
+    app.logger.info("code: %s" % (code))
     f = [c for c in config['codes'].keys() if c == code and
          config['codes'][c]['active']]
     if len(f) > 0:
-        print('Code assigned to %s' % (config['codes'][code]['user']))
+        app.logger.info('Code assigned to %s' % (config['codes'][code]['user']))
         return True
     else:
         return False
 
 
 def trigger_door_by_pin(pin):
+    app.logger.info("Triggering door by pin: %s" % (pin))
     GPIO.output(pin, GPIO.LOW)
     time.sleep(1)
     GPIO.output(pin, GPIO.HIGH)
     time.sleep(2)
+    app.logger.info("Door trigger complete")
     return "Ok"
 
 
