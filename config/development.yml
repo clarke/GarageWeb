@@ -1,0 +1,23 @@
+---
+codes:
+  '12345678':
+    user: 'clarke'
+    active: true
+sensors:
+  single:
+    pins:
+      - 16
+      - 18
+    activate: false
+  double:
+    pins:
+      - 20
+      - 22
+    activate: false
+relays:
+  one:
+    pin: 7
+    activate: true
+  two:
+    pin: 11
+    activate: true
