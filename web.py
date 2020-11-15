@@ -141,16 +141,18 @@ def init_pins():
     GPIO.setmode(GPIO.BOARD)
     GPIO.setwarnings(False)
     # Activate the sensors
-    for sensor in sensors.keys():
+    for s in sensors.keys():
+        sensor = sensors[s]
         if sensor['activate']:
-            app.logger.info("Activating sensor: %s" % (sensor))
+            app.logger.info("Activating sensor: %s/%s" % (s,sensor))
             for pin in sensor['pins']:
                 GPIO.setup(pin, GPIO.IN, GPIO.PUD_UP)
 
     # Activate the relays
-    for relay in relays.keys():
+    for r in relays.keys():
+        relay = relays[r]
         if relay['activate']:
-            app.logger.info("Activating relay: %s" % (relay))
+            app.logger.info("Activating relay: %s/%s" % (r,relay))
             GPIO.setup(relay['pin'], GPIO.OUT)
             GPIO.output(relay['pin'], GPIO.HIGH)
 
@@ -201,4 +203,5 @@ def trigger_door_by_pin(pin):
 if __name__ == '__main__':
     load_config()
     init_pins()
+    #app.logger.setLevel(app.logger.INFO)
     app.run(debug=True, host='0.0.0.0', port=5000)
