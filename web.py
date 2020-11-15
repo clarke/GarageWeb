@@ -205,5 +205,4 @@ def trigger_door_by_pin(pin):
 if __name__ == '__main__':
     load_config()
     init_pins()
-    #app.logger.setLevel(app.logger.INFO)
     app.run(debug=True, host='0.0.0.0', port=5000)
