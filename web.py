@@ -202,6 +202,13 @@ def trigger_door_by_pin(pin):
     return "Ok"
 
 
+def waitress_app():
+    load_config()
+    init_pins()
+    from waitress import serve
+    serve(app, listen='*:8080')
+
+
 if __name__ == '__main__':
     load_config()
     init_pins()
