@@ -3,6 +3,7 @@ from flask import Flask, request, abort
 import RPi.GPIO as GPIO
 import yaml
 import os
+import logging
 
 config_file = 'config/' + os.environ['FLASK_ENV'] + '.yml'
 config = {}
@@ -15,6 +16,7 @@ relay_two_active = True
 
 
 app = Flask(__name__)
+logging.basicConfig(filename='log/garage-web.log', level=logging.INFO, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
 
 @app.route('/', methods=['GET', 'POST'])
