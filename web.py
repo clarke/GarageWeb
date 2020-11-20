@@ -98,6 +98,25 @@ def single_door():
         app.logger.info("Bad code: %s" % (request.args['code']))
         abort(401)
 
+@app.route('/single/trigger')
+def single_door_trigger():
+    if code_is_authorized(request.args['code']):
+        if request.method == 'POST':
+            trigger_door_by_pin(relays['two']['pin'])
+            return "Ok"
+    else:
+        app.logger.info("Bad code: %s" % (request.args['code']))
+        abort(401)
+
+@app.route('/double/trigger')
+def double_door_trigger():
+    if code_is_authorized(request.args['code']):
+        if request.method == 'POST':
+            trigger_door_by_pin(relays['one']['pin'])
+            return "Ok"
+    else:
+        app.logger.info("Bad code: %s" % (request.args['code']))
+        abort(401)
 
 @app.route('/double', methods=['GET', 'POST'])
 def double_door():
@@ -134,6 +153,16 @@ def logfile():
 def images(picture):
     return app.send_static_file('images/' + picture)
 
+
+@app.route('/status')
+def status():
+    app.logger.info("Received a call to /status")
+    return '{"currentState": 1}'
+
+@app.route('/setState')
+def set_state():
+    app.logger.info("Received a call to /setState with %s" % (request.args['value']))
+    return '{"currentState": 1}'
 
 def init_pins():
     """
